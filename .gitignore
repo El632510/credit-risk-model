@@ -1,0 +1,4 @@
+data/
+mlruns/
+*.pyc
+__pycache__/
