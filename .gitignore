@@ -5,3 +5,9 @@ __pycache__/
 .venv/
 .DS_Store
 .env
+# Ignore MLflow database files
+*.db
+
+# Ignore MLflow run logs and artifacts
+mlruns/
+mlartifacts/
