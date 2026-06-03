@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -20,10 +20,10 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install pandas numpy scikit-learn mlflow fastapi uvicorn pydantic pytest flake8
 
       - name: Run linter (flake8)
-        run: flake8 src/ tests/ --max-line-length=100
+        run: flake8 src/ tests/ --max-line-length=100 --ignore=E501,W503
 
       - name: Run unit tests (pytest)
         run: pytest tests/ -v

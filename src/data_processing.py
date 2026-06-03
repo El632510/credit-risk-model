@@ -108,3 +108,40 @@ def get_processed_dataset_with_target(raw_df):
     print(f"\nShape: {final_df.shape}")
     print(f"High-risk: {final_df['is_high_risk'].sum()} / {len(final_df)}")
     return final_df
+def apply_woe_transformation(raw_df):
+    """
+    Applies WoE transformation on aggregated features.
+    
+    """
+    try:
+        from xverse.transformer import WOE
+    except ImportError:
+        print("Run: pip install xverse")
+        return None, None
+
+    # Get aggregated data (before scaling)
+    agg_df   = DataAggregator().fit_transform(raw_df)
+    timed_df = TimeFeatureExtractor().fit_transform(agg_df)
+
+    # Get target
+    rfm_df    = build_rfm(raw_df)
+    target_df = assign_high_risk(rfm_df)
+    merged    = timed_df.merge(target_df, on="CustomerId", how="left")
+
+    # Features for WoE (numeric only, no CustomerId)
+    features = NUMERIC_FEATURES
+    X = merged[features]
+    y = merged["is_high_risk"]
+
+    # Fit WoE
+    woe = WOE()
+    woe.fit(X, y)
+    X_woe = woe.transform(X)
+
+    # Show IV scores
+    iv_df = woe.iv_df.sort_values("IV", ascending=False).reset_index(drop=True)
+    print("\n── Information Value ──────────────────")
+    print(iv_df[["Variable", "IV"]].to_string(index=False))
+    print("\nIV Guide: <0.02 useless | 0.1-0.3 medium | 0.3-0.5 strong")
+
+    return woe, iv_df
