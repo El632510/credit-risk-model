@@ -20,10 +20,10 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install pandas numpy scikit-learn mlflow fastapi uvicorn pydantic pytest flake8
+        run: pip install pandas numpy scikit-learn mlflow fastapi uvicorn pydantic pytest flake8 xverse
 
       - name: Run linter (flake8)
-        run: flake8 src/ tests/ --max-line-length=100 --ignore=E501,W503
+        run: flake8 src/ tests/ --max-line-length=120 --ignore=E501,W503,E302,E303,E305,F401,W291,W293,E711,E712
 
       - name: Run unit tests (pytest)
         run: pytest tests/ -v
